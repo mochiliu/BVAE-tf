@@ -43,7 +43,8 @@ def test():
     bvae = AutoEncoder(encoder, decoder)
 
     bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
-    while True:
+    iteration_number = 0
+    while iteration_number < 30:
         bvae.ae.fit(img, img,
                     epochs=100,
                     batch_size=batchSize)
@@ -58,7 +59,7 @@ def test():
         pred = np.uint8((pred + 0.5)* 255) # convert to regular image values
 
         pred = Image.fromarray(pred[0])
-        pred.show() # display popup
+        pred.save(str(iteration_number),'.png')
 
 if __name__ == "__main__":
     test()
