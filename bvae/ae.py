@@ -44,7 +44,7 @@ def test():
 
     bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
     iteration_number = 0
-    while iteration_number < 30:
+    while iteration_number < 10:
         bvae.ae.fit(img, img,
                     epochs=100,
                     batch_size=batchSize)
@@ -60,6 +60,11 @@ def test():
 
         pred = Image.fromarray(pred[0])
         pred.save(str(iteration_number),'.png')
+
+        bvae.ae.save(str(iteration_number)+'_autoencoder.h5')
+        bvae.decoder.save(str(iteration_number)+'_decoder.h5')
+        bvae.encoder.save(str(iteration_number)+'_encoder.h5')
+
 
 if __name__ == "__main__":
     test()
