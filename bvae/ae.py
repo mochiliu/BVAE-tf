@@ -59,12 +59,12 @@ def test():
         pred = np.uint8((pred + 0.5)* 255) # convert to regular image values
 
         pred = Image.fromarray(pred[0])
-        pred.save(str(iteration_number),'.png')
+        pred.save(str(iteration_number),'.bmp')
 
         bvae.ae.save(str(iteration_number)+'_autoencoder.h5')
         bvae.decoder.save(str(iteration_number)+'_decoder.h5')
         bvae.encoder.save(str(iteration_number)+'_encoder.h5')
-
+        iteration_number += 1
 
 if __name__ == "__main__":
     test()
