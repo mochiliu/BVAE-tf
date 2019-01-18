@@ -68,12 +68,11 @@ if __name__ == "__main__":
             bvae.ae.fit(img, img, epochs=1, batch_size=batchSize, verbose=0)
             iteration_number+=1
             if iteration_number % 100 == 0:
-                #print(str(iteration_number)+time.ctime())
-            if iteration_number % 10000 == 0:
+                print(str(iteration_number)+time.ctime())
+            if iteration_number % 5000 == 0:
                 latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
                 print(latentVec)
                 print(time.ctime())
-                
                 train = img[0] #get a sample image
                 train[train > 0.5] = 0.5 # clean it up a bit
                 train[train < -0.5] = -0.5
