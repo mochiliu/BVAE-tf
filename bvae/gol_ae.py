@@ -43,7 +43,7 @@ class AutoEncoder(object):
 
 if __name__ == "__main__":
     inputShape = (32, 32, 3)
-    latentSize = 100
+    latentSize = 256
     manager = GameManager()
     
     batchSize = manager.sample_size
@@ -73,21 +73,22 @@ if __name__ == "__main__":
                 latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
                 print(latentVec)
                 print(time.ctime())
-                train = img[0] #get a sample image
+                sample_index = np.random.randint(batchSize)
+                train = img[sample_index] #get a sample image
                 train[train > 0.5] = 0.5 # clean it up a bit
                 train[train < -0.5] = -0.5
                 train = np.uint8((train + 0.5)* 255) # convert to regular image values
                 train = Image.fromarray(train)
                 train.save('./outputs/train_'+str(iteration_number)+'.bmp')
         
-                pred = bvae.ae.predict(img, batch_size=batchSize)[0] # get the reconstructed image
+                pred = bvae.ae.predict(img, batch_size=batchSize)[sample_index] # get the reconstructed image
                 pred[pred > 0.5] = 0.5 # clean it up a bit
                 pred[pred < -0.5] = -0.5
                 pred = np.uint8((pred + 0.5)* 255) # convert to regular image values
                 pred = Image.fromarray(pred)
                 pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
                 
-                bvae.ae.save('./output_models/'+str(iteration_number)+'_autoencoder.h5')
+                #bvae.ae.save('./output_models/'+str(iteration_number)+'_autoencoder.h5')
                 bvae.decoder.save('./output_models/'+str(iteration_number)+'_decoder.h5')
                 bvae.encoder.save('./output_models/'+str(iteration_number)+'_encoder.h5')
         img=twrv_one.join()
