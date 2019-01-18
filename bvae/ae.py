@@ -59,7 +59,7 @@ def test():
         pred = np.uint8((pred + 0.5)* 255) # convert to regular image values
 
         pred = Image.fromarray(pred[0])
-        pred.save(str(iteration_number),'.bmp')
+        pred.save(str(iteration_number)+'.bmp')
 
         bvae.ae.save(str(iteration_number)+'_autoencoder.h5')
         bvae.decoder.save(str(iteration_number)+'_decoder.h5')

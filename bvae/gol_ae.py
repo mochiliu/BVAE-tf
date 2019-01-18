@@ -60,18 +60,18 @@ if __name__ == "__main__":
     twrv_one.start()
     img=twrv_one.join()
     
-    while iteration_number < 2000:
+    while iteration_number < 100000:
         twrv_one = ThreadWithReturnValue(target=manager.get_images, args=(batchSize,))
         twrv_one.start()
         
         while twrv_one.is_alive():
-            bvae.ae.fit(img, img, epochs=1, batch_size=batchSize)
+            bvae.ae.fit(img, img, epochs=1, batch_size=batchSize, verbose=0)
             iteration_number+=1
+
         img=twrv_one.join()
-        
+        #print(str(iteration_number)+time.ctime())
         #check in once n iterations
-        if iteration_number % 100 == 0:
-        # example retrieving the latent vector
+        if iteration_number % 5000 = 0:
             latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
             print(latentVec)
             print(time.ctime())
@@ -90,7 +90,7 @@ if __name__ == "__main__":
             pred = Image.fromarray(pred)
             pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
             
-            bvae.ae.save(str(iteration_number)+'_autoencoder.h5')
-            bvae.decoder.save(str(iteration_number)+'_decoder.h5')
-            bvae.encoder.save(str(iteration_number)+'_encoder.h5')
+            bvae.ae.save('./output_models/'+str(iteration_number)+'_autoencoder.h5')
+            bvae.decoder.save('./output_models/'+str(iteration_number)+'_decoder.h5')
+            bvae.encoder.save('./output_models/'+str(iteration_number)+'_encoder.h5')
         
