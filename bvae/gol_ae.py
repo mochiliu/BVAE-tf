@@ -34,7 +34,7 @@ if __name__ == "__main__":
    
     manager = GameManager()
     batchSize = manager.sample_size
-    ntrain=10#number_of_training_samples//batchSize 
+    ntrain=50#number_of_training_samples//batchSize 
     nval=1#number_of_validation_samples//batchSize
     # This is how you build the autoencoder
     encoder = Darknet19Encoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
@@ -44,8 +44,8 @@ if __name__ == "__main__":
     bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
     iteration_number = 0
 
-    while iteration_number < 10:
-        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=10,verbose=2)
+    while iteration_number < 100:
+        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=3, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=10,verbose=1)
 
         img = manager.get_images(batchSize)
         latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
