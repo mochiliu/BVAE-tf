@@ -30,7 +30,7 @@ class AutoEncoder(object):
 
 if __name__ == "__main__":
     inputShape = (32, 32, 3)
-    latentSize = 128
+    latentSize = 900
    
     manager = GameManager()
     batchSize = manager.sample_size
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     iteration_number = 0
 
     while iteration_number < 100:
-        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=6, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
+        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=6, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
 
         sample_index = np.random.randint(batchSize)
         img = manager.get_images(batchSize)
