@@ -9,7 +9,9 @@ THE UNLICENSE
 import tensorflow as tf
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras import backend as K
-from models import Darknet19Encoder, Darknet19Decoder
+from simple_models import Encoder, Decoder
+#from keras.callbacks import TensorBoard
+
 #import os
 
 import numpy as np
@@ -38,7 +40,7 @@ class mnist_manager(object):
               images[index,2:30,2:30,2] = img * np.random.uniform()
               current_index += 1
               current_index = current_index % len(self.x_train)
-            images = images - 0.5
+            images = (images / 255) - 0.5
             yield images, images
 
     def generate_images_test(self):
@@ -52,7 +54,7 @@ class mnist_manager(object):
               images[index,2:30,2:30,2] = img * np.random.uniform()
               current_index += 1
               current_index = current_index % len(self.x_test)
-            images = images - 0.5
+            images = (images / 255) - 0.5
             yield images, images
             
     def get_images(self, count):
@@ -80,8 +82,8 @@ if __name__ == "__main__":
     ntrain=50#number_of_training_samples//batchSize 
     nval=1#number_of_validation_samples//batchSize
     # This is how you build the autoencoder
-    encoder = Darknet19Encoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
-    decoder = Darknet19Decoder(inputShape, batchSize, latentSize)
+    encoder = Encoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
+    decoder = Decoder(inputShape, batchSize, latentSize)
     bvae = AutoEncoder(encoder, decoder)
 
     bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
@@ -89,12 +91,12 @@ if __name__ == "__main__":
 
     while iteration_number < 10:
         bvae.ae.fit_generator(manager.generate_images_train(), steps_per_epoch=ntrain, validation_data=next(manager.generate_images_test()), validation_steps=nval, epochs=1,verbose=1)
-
+        
+        sample_index = np.random.randint(batchSize)
         img = manager.get_images(batchSize)
-        latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
+        latentVec = bvae.encoder.predict(img, batch_size=batchSize)[sample_index]
         print(latentVec)
         print(time.ctime())
-        sample_index = np.random.randint(batchSize)
         train = img[sample_index] #get a sample image
         train[train > 0.5] = 0.5 # clean it up a bit
         train[train < -0.5] = -0.5
@@ -110,7 +112,7 @@ if __name__ == "__main__":
         pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
         
         #bvae.ae.save('./output_models/'+str(iteration_number)+'_autoencoder.h5')
-        #.decoder.save('./output_models/'+str(iteration_number)+'_decoder.h5')
+        #bvae.decoder.save('./output_models/'+str(iteration_number)+'_decoder.h5')
         #bvae.encoder.save('./output_models/'+str(iteration_number)+'_encoder.h5')
         iteration_number+=1
         #check in once n iterations
