@@ -40,7 +40,7 @@ class mnist_manager(object):
               images[index,2:30,2:30,2] = img * np.random.uniform()
               current_index += 1
               current_index = current_index % len(self.x_train)
-            images = (images / 255) - 0.5
+            images = (images / 255)
             yield images, images
 
     def generate_images_test(self):
@@ -54,7 +54,7 @@ class mnist_manager(object):
               images[index,2:30,2:30,2] = img * np.random.uniform()
               current_index += 1
               current_index = current_index % len(self.x_test)
-            images = (images / 255) - 0.5
+            images = (images / 255) 
             yield images, images
             
     def get_images(self, count):
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
     iteration_number = 0
 
-    while iteration_number < 10:
+    while iteration_number < 100:
         bvae.ae.fit_generator(manager.generate_images_train(), steps_per_epoch=ntrain, validation_data=next(manager.generate_images_test()), validation_steps=nval, epochs=1,verbose=1)
         
         sample_index = np.random.randint(batchSize)
@@ -98,22 +98,21 @@ if __name__ == "__main__":
         print(latentVec)
         print(time.ctime())
         train = img[sample_index] #get a sample image
-        train[train > 0.5] = 0.5 # clean it up a bit
-        train[train < -0.5] = -0.5
-        train = np.uint8((train + 0.5)* 255) # convert to regular image values
+        train = np.uint8(train* 255) # convert to regular image values
         train = Image.fromarray(train)
-        train.save('./outputs/train_'+str(iteration_number)+'.bmp')
-
-        pred = bvae.ae.predict(img, batch_size=batchSize)[sample_index] # get the reconstructed image
-        pred[pred > 0.5] = 0.5 # clean it up a bit
-        pred[pred < -0.5] = -0.5
-        pred = np.uint8((pred + 0.5)* 255) # convert to regular image values
-        pred = Image.fromarray(pred)
-        pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
+        #train.save('./outputs/train_'+str(iteration_number)+'.bmp')
+        train.save('.\\outputs\\train_'+str(iteration_number)+'.bmp')
         
-        #bvae.ae.save('./output_models/'+str(iteration_number)+'_autoencoder.h5')
-        #bvae.decoder.save('./output_models/'+str(iteration_number)+'_decoder.h5')
-        #bvae.encoder.save('./output_models/'+str(iteration_number)+'_encoder.h5')
+        pred = bvae.ae.predict(img, batch_size=batchSize)[sample_index] # get the reconstructed image
+        pred = np.uint8(pred * 255) # convert to regular image values
+        pred = Image.fromarray(pred)
+        #pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
+        pred.save('.\\outputs\\pred_'+str(iteration_number)+'.bmp')
+        
+        if iteration_number % 10 == 0:
+            bvae.ae.save('.\\output_models\\'+str(iteration_number)+'_autoencoder.h5')
+            bvae.decoder.save('.\\output_models\\'+str(iteration_number)+'_decoder.h5')
+            bvae.encoder.save('.\\output_models\\'+str(iteration_number)+'_encoder.h5')
         iteration_number+=1
         #check in once n iterations
 
