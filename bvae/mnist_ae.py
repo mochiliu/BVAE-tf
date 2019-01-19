@@ -96,23 +96,27 @@ if __name__ == "__main__":
         img = manager.get_images(batchSize)
         latentVec = bvae.encoder.predict(img, batch_size=batchSize)[sample_index]
         print(latentVec)
-        print(time.ctime())
+        print(str(iteration_number) + ' ' + time.ctime())
         train = img[sample_index] #get a sample image
         train = np.uint8(train* 255) # convert to regular image values
         train = Image.fromarray(train)
-        #train.save('./outputs/train_'+str(iteration_number)+'.bmp')
-        train.save('.\\outputs\\train_'+str(iteration_number)+'.bmp')
+        train.save('./outputs/train_'+str(iteration_number)+'.bmp')
+        #train.save('.\\outputs\\train_'+str(iteration_number)+'.bmp')
         
         pred = bvae.ae.predict(img, batch_size=batchSize)[sample_index] # get the reconstructed image
         pred = np.uint8(pred * 255) # convert to regular image values
         pred = Image.fromarray(pred)
-        #pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
-        pred.save('.\\outputs\\pred_'+str(iteration_number)+'.bmp')
+        pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
+        #pred.save('.\\outputs\\pred_'+str(iteration_number)+'.bmp')
         
         if iteration_number % 10 == 0:
-            bvae.ae.save('.\\output_models\\'+str(iteration_number)+'_autoencoder.h5')
-            bvae.decoder.save('.\\output_models\\'+str(iteration_number)+'_decoder.h5')
-            bvae.encoder.save('.\\output_models\\'+str(iteration_number)+'_encoder.h5')
+            bvae.ae.save('./output_models/'+str(iteration_number)+'_autoencoder.h5')
+            bvae.decoder.save('./output_models/'+str(iteration_number)+'_decoder.h5')
+            bvae.encoder.save('./output_models/'+str(iteration_number)+'_encoder.h5')
+
+#            bvae.ae.save('.\\output_models\\'+str(iteration_number)+'_autoencoder.h5')
+#            bvae.decoder.save('.\\output_models\\'+str(iteration_number)+'_decoder.h5')
+#            bvae.encoder.save('.\\output_models\\'+str(iteration_number)+'_encoder.h5')
         iteration_number+=1
         #check in once n iterations
 
