@@ -141,6 +141,16 @@ class GameManager(object):
           images[index,:,:,:] = img
           self.grid = update(self.grid)
         return images
+
+    def generate_images(self):
+        while True:
+            images = np.zeros((self.n_samples,self.img_size,self.img_size,3), dtype=np.float32)
+            self.reset()
+            for index in range(self.n_samples):
+              img = grid2img(self.grid, self.img_size)
+              images[index,:,:,:] = img
+              self.grid = update(self.grid)
+            yield images, images
     
     def get_random_images(self, size):
         indices = [np.random.randint(self.n_samples) for i in range(size)]
