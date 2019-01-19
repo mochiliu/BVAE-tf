@@ -20,7 +20,7 @@ class Architecture(object):
     '''
     generic architecture template
     '''
-    def __init__(self, inputShape=None, batchSize=None, latentSize=None):
+    def __init__(self, inputShape=None, batchSize=None, latentSize=None, intermediateSize=512):
         '''
         params:
         ---------
@@ -35,7 +35,7 @@ class Architecture(object):
         self.inputShape = inputShape
         self.batchSize = batchSize
         self.latentSize = latentSize
-        self.intermediate_dim = 512
+        self.intermediateSize = intermediateSize
 
         self.model = self.Build()
 
@@ -85,7 +85,7 @@ class Encoder(Architecture):
         # create the input layer for feeding the netowrk
         inLayer = Input(self.inputShape, self.batchSize)
                 
-        net = Dense(self.intermediate_dim, activation='relu')(inLayer)
+        net = Dense(self.intermediateSize, activation='relu')(inLayer)
 
         # variational encoder output (distributions)
         mean = Conv2D(filters=self.latentSize, kernel_size=(1, 1),
@@ -108,7 +108,7 @@ class Decoder(Architecture):
         # input layer is from GlobalAveragePooling:
         inLayer = Input([self.latentSize], self.batchSize)
         # reexpand the input from flat:
-        net = Dense(self.intermediate_dim, activation='relu')(inLayer)
+        net = Dense(self.intermediateSize, activation='relu')(inLayer)
         net = Dense(np.prod(self.inputShape), activation='sigmoid')(net)
         net = Reshape(self.inputShape)(net)
         
