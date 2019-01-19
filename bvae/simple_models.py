@@ -20,7 +20,7 @@ class Architecture(object):
     '''
     generic architecture template
     '''
-    def __init__(self, inputShape=None, batchSize=None, latentSize=None, intermediateSize=512):
+    def __init__(self, inputShape=None, batchSize=None, latentSize=None, intermediateSize=900):
         '''
         params:
         ---------
