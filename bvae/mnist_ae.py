@@ -38,6 +38,7 @@ class mnist_manager(object):
               images[index,2:30,2:30,2] = img * np.random.uniform()
               current_index += 1
               current_index = current_index % len(self.x_train)
+            images = images - 0.5
             yield images, images
 
     def generate_images_test(self):
@@ -46,11 +47,12 @@ class mnist_manager(object):
             images = np.zeros((self.n_samples,self.img_size,self.img_size,3), dtype=np.float32)
             for index in range(self.n_samples):
               img = self.x_test[current_index]
-              images[index,2:30,2:30,0] = img * np.random.uniform() - 0.5
-              images[index,2:30,2:30,1] = img * np.random.uniform() - 0.5
-              images[index,2:30,2:30,2] = img * np.random.uniform() - 0.5
+              images[index,2:30,2:30,0] = img * np.random.uniform()
+              images[index,2:30,2:30,1] = img * np.random.uniform()
+              images[index,2:30,2:30,2] = img * np.random.uniform()
               current_index += 1
               current_index = current_index % len(self.x_test)
+            images = images - 0.5
             yield images, images
             
     def get_images(self, count):
