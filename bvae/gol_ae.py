@@ -30,7 +30,7 @@ class AutoEncoder(object):
 
 if __name__ == "__main__":
     inputShape = (32, 32, 3)
-    latentSize = 64
+    latentSize = 128
    
     manager = GameManager()
     batchSize = manager.sample_size
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     iteration_number = 0
 
     while iteration_number < 100:
-        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=3, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
+        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
 
         sample_index = np.random.randint(batchSize)
         img = manager.get_images(batchSize)
@@ -55,15 +55,16 @@ if __name__ == "__main__":
         train = img[sample_index] #get a sample image
         train = np.uint8(train* 255) # convert to regular image values
         train = Image.fromarray(train)
-        train.save('./outputs/train_'+str(iteration_number)+'.bmp')
-        #train.save('.\\outputs\\train_'+str(iteration_number)+'.bmp')
+        #train.save('./outputs/train_'+str(iteration_number)+'.bmp')
+        train.save('.\\outputs\\train_'+str(iteration_number)+'.bmp')
         
         pred = bvae.ae.predict(img, batch_size=batchSize)[sample_index] # get the reconstructed image
         pred = np.uint8(pred * 255) # convert to regular image values
         pred = Image.fromarray(pred)
-        pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
-        
-        if iteration_number % 10 == 1:
+        #pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
+        pred.save('.\\outputs\\pred_'+str(iteration_number)+'.bmp')
+
+        if iteration_number % 10 == 0:
             bvae.ae.save('./output_models/'+str(iteration_number)+'_autoencoder.h5')
             bvae.decoder.save('./output_models/'+str(iteration_number)+'_decoder.h5')
             bvae.encoder.save('./output_models/'+str(iteration_number)+'_encoder.h5')
