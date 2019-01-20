@@ -15,6 +15,7 @@ import numpy as np
 from PIL import Image
 from game_of_life_manager import GameManager
 import time
+from keras.callbacks import TensorBoard
 
 
 class AutoEncoder(object):
@@ -39,10 +40,11 @@ if __name__ == "__main__":
         ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
         iterations = 500
+        os.system('tensorboard --logdir=/tmp/autoencoder')
         
     inputShape = (32, 32, 3)
     intermediateSize = 900
-    latentSize = 128
+    latentSize = 64
     
     #set up output folders
     path = os.getcwd()  
@@ -68,7 +70,7 @@ if __name__ == "__main__":
         if os.name == 'nt':
             bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
         else:
-            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=20, workers=8, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=25, workers=9, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[TensorBoard(log_dir='/tmp/autoencoder')])
 
         img = manager.get_images(batchSize)
         latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
