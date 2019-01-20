@@ -71,9 +71,9 @@ if __name__ == "__main__":
         pred.save(os.path.join(outputs_folder,str(iteration_number)+'_pred_'+'.bmp'))
 
         if iteration_number % 10 == 0:
-            #bvae.ae.save(os.path.join(outputs_folder, str(iteration_number)+'_autoencoder.h5'))
-            bvae.decoder.save(os.path.join(outputs_folder, str(iteration_number)+'_decoder.h5'))
-            bvae.encoder.save(os.path.join(outputs_folder, str(iteration_number)+'_encoder.h5'))
+            #bvae.ae.save(os.path.join(output_models_folder, str(iteration_number)+'_autoencoder.h5'))
+            bvae.decoder.save(os.path.join(output_models_folder, str(iteration_number)+'_decoder.h5'))
+            bvae.encoder.save(os.path.join(output_models_folder, str(iteration_number)+'_encoder.h5'))
         iteration_number+=1
         #check in once n iterations
 
