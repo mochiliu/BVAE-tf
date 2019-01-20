@@ -109,6 +109,9 @@ def grid2img(grid, img_size):
     img[img_size-1,:,:] = img[1,:,:]
     img[:,0,:] = img[:,img_size-2,:]
     img[:,img_size-1,:] = img[:,1,:]
+#    array_sum = np.sum(img)
+#    if array_sum > 0:
+#        img = img / np.sum(img) 
     return img
 
 class GameManager(object):
@@ -116,7 +119,7 @@ class GameManager(object):
         self.N = 30
         self.img_size = self.N + 2
         self.grid = randomGrid(self.N)
-        self.n_samples = 4*64
+        self.n_samples = 64*4
         self.skip_initial_iteration = 4
         
     def reset(self):

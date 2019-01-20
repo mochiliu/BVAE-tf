@@ -83,22 +83,25 @@ class Encoder(Architecture):
 
     def Build(self):
         # create the input layer for feeding the netowrk
-        inLayer = Input(self.inputShape, self.batchSize)
+        inLayer = Input(self.inputShape)
+        net = Reshape((np.prod(self.inputShape),))(inLayer)
+        net = Dense(self.latentSize, activation='relu')(net)
                 
-        net = Dense(self.intermediateSize, activation='relu')(inLayer)
+#        net = Dense(self.intermediateSize, activation='relu')(inLayer)
 
-        # variational encoder output (distributions)
-        mean = Conv2D(filters=self.latentSize, kernel_size=(1, 1),
-                      padding='same')(net)
-        mean = GlobalAveragePooling2D()(mean)
-        stddev = Conv2D(filters=self.latentSize, kernel_size=(1, 1),
-                        padding='same')(net)
-        stddev = GlobalAveragePooling2D()(stddev)
+#        # variational encoder output (distributions)
+#        mean = Conv2D(filters=self.latentSize, kernel_size=(1, 1),
+#                      padding='same')(net)
+#        mean = GlobalAveragePooling2D()(mean)
+#        stddev = Conv2D(filters=self.latentSize, kernel_size=(1, 1),
+#                        padding='same')(net)
+#        stddev = GlobalAveragePooling2D()(stddev)
+#
+#        sample = SampleLayer(self.latentConstraints, self.beta,
+#                            self.latentCapacity, self.randomSample)([mean, stddev])
 
-        sample = SampleLayer(self.latentConstraints, self.beta,
-                            self.latentCapacity, self.randomSample)([mean, stddev])
-
-        return Model(inputs=inLayer, outputs=sample)
+        #return Model(inputs=inLayer, outputs=sample)
+        return Model(inLayer, net)
 
 class Decoder(Architecture):
     def __init__(self, inputShape=(256, 256, 3), batchSize=1, latentSize=1000):
@@ -106,7 +109,7 @@ class Decoder(Architecture):
 
     def Build(self):
         # input layer is from GlobalAveragePooling:
-        inLayer = Input([self.latentSize], self.batchSize)
+        inLayer = Input([self.latentSize])
         # reexpand the input from flat:
         net = Dense(self.intermediateSize, activation='relu')(inLayer)
         net = Dense(np.prod(self.inputShape), activation='sigmoid')(net)

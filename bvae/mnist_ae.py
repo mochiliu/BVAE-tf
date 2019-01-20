@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     manager = mnist_manager()
     batchSize = manager.sample_size
-    ntrain=50#number_of_training_samples//batchSize 
+    ntrain=50*64#number_of_training_samples//batchSize 
     nval=1#number_of_validation_samples//batchSize
     # This is how you build the autoencoder
     encoder = Encoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)

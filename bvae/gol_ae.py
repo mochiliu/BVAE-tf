@@ -41,7 +41,7 @@ if __name__ == "__main__":
     decoder = Decoder(inputShape, batchSize, latentSize)
     bvae = AutoEncoder(encoder, decoder)
 
-    bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
+    bvae.ae.compile(optimizer='adam', loss='binary_crossentropy')
     iteration_number = 0
 
     while iteration_number < 100:
@@ -49,17 +49,17 @@ if __name__ == "__main__":
         #bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
 
         sample_index = np.random.randint(batchSize)
-        img = manager.get_images(batchSize)
-        latentVec = bvae.encoder.predict(img, batch_size=batchSize)[sample_index]
-        print(latentVec)
+        img = manager.get_images(1)
+        latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
+        #print(latentVec)
         print(str(iteration_number) + ' ' + time.ctime())
-        train = img[sample_index] #get a sample image
+        train = img[0] #get a sample image
         train = np.uint8(train* 255) # convert to regular image values
         train = Image.fromarray(train)
         train.save('./outputs/train_'+str(iteration_number)+'.bmp')
         #train.save('.\\outputs\\train_'+str(iteration_number)+'.bmp')
         
-        pred = bvae.ae.predict(img, batch_size=batchSize)[sample_index] # get the reconstructed image
+        pred = bvae.ae.predict(img, batch_size=batchSize)[0] # get the reconstructed image
         pred = np.uint8(pred * 255) # convert to regular image values
         pred = Image.fromarray(pred)
         pred.save('./outputs/pred_'+str(iteration_number)+'.bmp')
