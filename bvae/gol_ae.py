@@ -9,7 +9,7 @@ THE UNLICENSE
 import tensorflow as tf
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras import backend as K
-from simple_models import Encoder, Decoder
+from simple_models import Encoder, Decoder, ConvEncoder, ConvDecoder
 import shutil, os
 import numpy as np
 from PIL import Image
@@ -28,6 +28,20 @@ class AutoEncoder(object):
 
 
 if __name__ == "__main__":
+    #test if windows or linux
+    if os.name == 'nt':
+        batchSize = 64
+        ntrain=1#number_of_training_samples//batchSize 
+        iterations = 0
+    else:
+        batchSize = 4*64
+        ntrain=50#number_of_training_samples//batchSize 
+        iterations = 100
+        
+    inputShape = (32, 32, 3)
+    latentSize = 64
+    nval=1#number_of_validation_samples//batchSize  
+    
     #set up output folders
     path = os.getcwd()  
     outputs_folder = os.path.join(path, 'outputs')
@@ -36,25 +50,27 @@ if __name__ == "__main__":
     shutil.rmtree(output_models_folder,ignore_errors=True)
     os.mkdir(outputs_folder)
     os.mkdir(output_models_folder)
-    
-    inputShape = (32, 32, 3)
-    latentSize = 900
-    batchSize = 4*64
-    
+  
     manager = GameManager(batchSize)
-    ntrain=50#number_of_training_samples//batchSize 
-    nval=1#number_of_validation_samples//batchSize
-    # This is how you build the autoencoder
-    encoder = Encoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
-    decoder = Decoder(inputShape, batchSize, latentSize)
+
+    # dense autoencoder
+#    encoder = Encoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
+#    decoder = Decoder(inputShape, batchSize, latentSize)
+    
+    #conv autoencoder
+    encoder = ConvEncoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
+    decoder = ConvDecoder(inputShape, batchSize, latentSize)
+    
     bvae = AutoEncoder(encoder, decoder)
 
     bvae.ae.compile(optimizer='adam', loss='binary_crossentropy')
     iteration_number = 0
 
-    while iteration_number < 100:
-        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=20, workers=6, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
-        #bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
+    while iteration_number <= iterations:
+        if os.name == 'nt':
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
+        else:
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=20, workers=6, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
 
         img = manager.get_images(batchSize)
         latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
