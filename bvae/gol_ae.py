@@ -40,7 +40,7 @@ if __name__ == "__main__":
         ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
         iterations = 500
-        os.system('tensorboard --logdir=/tmp/autoencoder')
+        os.system('tensorboard --logdir=/tmp/autoencoder &')
         
     inputShape = (32, 32, 3)
     intermediateSize = 900
