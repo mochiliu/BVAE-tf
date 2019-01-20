@@ -45,7 +45,7 @@ if __name__ == "__main__":
     iteration_number = 0
 
     while iteration_number < 100:
-        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queuemax_queue_size=20, workers=6, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
+        bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=20, workers=6, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
         #bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
 
         sample_index = np.random.randint(batchSize)
