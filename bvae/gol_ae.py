@@ -36,9 +36,9 @@ if __name__ == "__main__":
         iterations = 0
     else:
         batchSize = 4*64
-        ntrain=50#number_of_training_samples//batchSize 
+        ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
-        iterations = 100
+        iterations = 500
         
     inputShape = (32, 32, 3)
     intermediateSize = 900
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         if os.name == 'nt':
             bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
         else:
-            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=20, workers=7, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=20, workers=8, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
 
         img = manager.get_images(batchSize)
         latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         pred = Image.fromarray(pred)
         pred.save(os.path.join(outputs_folder,str(iteration_number)+'_pred_'+'.bmp'))
 
-        if iteration_number % 10 == 0:
+        if iteration_number % 20 == 0:
             #bvae.ae.save(os.path.join(output_models_folder, str(iteration_number)+'_autoencoder.h5'))
             bvae.decoder.save(os.path.join(output_models_folder, str(iteration_number)+'_decoder.h5'))
             bvae.encoder.save(os.path.join(output_models_folder, str(iteration_number)+'_encoder.h5'))

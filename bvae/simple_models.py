@@ -201,7 +201,7 @@ class OptimalEncoder(Architecture):
     def Build(self):
         # create the input layer for feeding the netowrk
         inLayer = Input(self.inputShape) #(32,32,3)
-        net = Conv2D(32, (3, 3), activation='relu', padding='same')(inLayer)
+        net = Conv2D(96, (3, 3), activation='relu', padding='same')(inLayer)
         net = MaxPooling2D((2, 2), padding='same')(net) #(16,16,3)
         
 #        net = Conv2D(32, (3, 3), activation='relu', padding='same')(net)
@@ -245,7 +245,7 @@ class OptimalDecoder(Architecture):
 
 #        net = Conv2D(32, (3, 3), activation='relu', padding='same')(net)
 #        net = UpSampling2D((2, 2))(net)
-        net = Conv2D(32, (3, 3), activation='relu', padding='same')(net) #(16,16,96)
+        net = Conv2D(96, (3, 3), activation='relu', padding='same')(net) #(16,16,96)
         net = UpSampling2D((2, 2))(net)
         net = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(net)
         
