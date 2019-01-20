@@ -11,10 +11,10 @@ import numpy as np
 from tensorflow.python.keras import Input
 from tensorflow.python.keras.layers import (InputLayer, Dense, Conv2D, Conv2DTranspose,
             BatchNormalization, LeakyReLU, MaxPool2D, UpSampling2D,
-            Reshape, GlobalAveragePooling2D)
+            Reshape, GlobalAveragePooling2D,AveragePooling1D)
 from tensorflow.python.keras.models import Model
 
-from model_utils import SampleLayer
+from model_utils_mod import SampleLayer
 
 class Architecture(object):
     '''
@@ -85,8 +85,10 @@ class Encoder(Architecture):
         # create the input layer for feeding the netowrk
         inLayer = Input(self.inputShape)
         net = Reshape((np.prod(self.inputShape),))(inLayer)
-        net = Dense(self.latentSize, activation='relu')(net)
-                
+        #net = Dense(self.latentSize, activation='relu')(net)
+        
+        mean = Dense(self.latentSize, activation='relu')(net)
+        stddev = Dense(self.latentSize, activation='relu')(net)
 #        net = Dense(self.intermediateSize, activation='relu')(inLayer)
 
 #        # variational encoder output (distributions)
@@ -96,12 +98,12 @@ class Encoder(Architecture):
 #        stddev = Conv2D(filters=self.latentSize, kernel_size=(1, 1),
 #                        padding='same')(net)
 #        stddev = GlobalAveragePooling2D()(stddev)
-#
-#        sample = SampleLayer(self.latentConstraints, self.beta,
-#                            self.latentCapacity, self.randomSample)([mean, stddev])
 
-        #return Model(inputs=inLayer, outputs=sample)
-        return Model(inLayer, net)
+        sample = SampleLayer(self.latentConstraints, self.beta,
+                            self.latentCapacity, self.batchSize, self.latentSize, self.randomSample)([mean, stddev])
+
+        return Model(inputs=inLayer, outputs=sample) #variational
+        #return Model(inLayer, net) #nonvariational
 
 class Decoder(Architecture):
     def __init__(self, inputShape=(256, 256, 3), batchSize=1, latentSize=1000):

@@ -39,7 +39,7 @@ class SampleLayer(Layer):
         ex.
             sample = SampleLayer('bvae', 16)([mean, stddev])
     '''
-    def __init__(self, latent_regularizer='bvae', beta=100., capacity=0., randomSample=True, **kwargs):
+    def __init__(self, latent_regularizer='bvae', beta=100., capacity=0., batchSize=256, latentSize=900, randomSample=True, **kwargs):
         '''
         args:
         ------
@@ -66,12 +66,14 @@ class SampleLayer(Layer):
         self.reg = latent_regularizer
         self.beta = beta
         self.capacity = capacity
+        self.batchSize = batchSize
+        self.latentSize = latentSize
         self.random = randomSample
         super(SampleLayer, self).__init__(**kwargs)
 
     def build(self, input_shape):
         # save the shape for distribution sampling
-        self.shape = input_shape[0]
+        self.shape = input_shape[0] #inputshape of mean
 
         super(SampleLayer, self).build(input_shape) # needed for layers
 
@@ -99,12 +101,11 @@ class SampleLayer(Layer):
                                 - K.square(mean)
                                 - K.exp(stddev), axis=-1)
             self.add_loss(latent_loss, x)
-     
         if self.random:
             # 'reparameterization trick':
-             epsilon = K.random_normal(shape=self.shape,
+            epsilon = K.random_normal(shape=(self.batchSize,self.latentSize),
                                   mean=0., stddev=1.)  
-             return mean + K.exp(stddev) * epsilon
+            return mean + K.exp(stddev) * epsilon
         else: # do not perform random sampling, simply grab the impulse value
             return mean + 0*stddev # Keras needs the *0 so the gradinent is not None
 

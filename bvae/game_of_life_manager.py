@@ -112,11 +112,11 @@ def grid2img(grid, img_size):
     return img
 
 class GameManager(object):
-    def __init__(self):
+    def __init__(self, batchSize=64):
         self.N = 30
         self.img_size = self.N + 2
         self.grid = randomGrid(self.N)
-        self.n_samples = 64*4
+        self.n_samples = batchSize
         self.skip_initial_iteration = 4
         
     def reset(self):
