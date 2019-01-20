@@ -94,10 +94,10 @@ def grid2colorgrid(grid):
     color_grid = np.zeros((N,N,3), dtype=np.float32)
     for i in range(N): 
         for j in range(N): 
-            pixel_color = rgb_int2tuple(grid[i,j])
-            color_grid[i,j,0] = pixel_color[0] / 255
-            color_grid[i,j,1] = pixel_color[1] / 255
-            color_grid[i,j,2] = pixel_color[2] / 255
+            #pixel_color = rgb_int2tuple(grid[i,j])
+            color_grid[i,j,0] = grid[i,j] > 0 # pixel_color[0] / 255
+            color_grid[i,j,1] = grid[i,j] > 0 # pixel_color[1] / 255
+            color_grid[i,j,2] = grid[i,j] > 0 # pixel_color[2] / 255
     return color_grid
 
 def grid2img(grid, img_size):
