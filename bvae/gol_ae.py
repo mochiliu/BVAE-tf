@@ -9,13 +9,13 @@ THE UNLICENSE
 import tensorflow as tf
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras import backend as K
+from tensorflow.python.keras.callbacks import TensorBoard
 from simple_models import Encoder, Decoder, ConvEncoder, ConvDecoder, OptimalEncoder, OptimalDecoder
 import shutil, os
 import numpy as np
 from PIL import Image
 from game_of_life_manager import GameManager
 import time
-from keras.callbacks import TensorBoard
 
 
 class AutoEncoder(object):
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         nval=5#number_of_validation_samples//batchSize  
         iterations = 500
         os.system('tensorboard --logdir=/tmp/autoencoder &')
-        
+        time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
     latentSize = 64
