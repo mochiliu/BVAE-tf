@@ -18,7 +18,7 @@ import time
 
 class ChangeMetrics(Callback):
     def on_epoch_end(self, epoch, logs):
-        logs['loss'] = np.mean(logs['loss'])  # replace it with your metrics
+        #logs['loss'] = np.mean(logs['loss'])  # replace it with your metrics
         logs['val_loss'] = np.mean(logs['val_loss'][0])  # replace it with your metrics
             
     def on_batch_end(self, batch, logs):
