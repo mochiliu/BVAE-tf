@@ -92,14 +92,16 @@ def update(grid):
 def grid2colorgrid(grid, colorscheme):
     N = len(grid)
     color_grid = np.zeros((N,N,3), dtype=np.float32)
-    for i in range(N): 
-        for j in range(N): 
-            if colorscheme == 'soft':
+    if colorscheme == 'soft':
+        for i in range(N): 
+            for j in range(N): 
                 pixel_color = rgb_int2tuple(grid[i,j])
                 color_grid[i,j,0] = pixel_color[0] / 255 # grid[i,j] > 0
                 color_grid[i,j,1] = pixel_color[1] / 255 # grid[i,j] > 0
                 color_grid[i,j,2] = pixel_color[2] / 255 # grid[i,j] > 0 
-            elif colorscheme == 'hard':
+    elif colorscheme == 'hard':
+        for i in range(N): 
+            for j in range(N): 
                 pixel_color = rgb_int2tuple(grid[i,j])
                 if ~np.any([np.array(pixel_color) > 0.5]):
                     #none of the colors are bigger than 0.5, take the brightest channel
@@ -107,7 +109,9 @@ def grid2colorgrid(grid, colorscheme):
                 color_grid[i,j,0] = pixel_color[0] / 255 > 0.5
                 color_grid[i,j,1] = pixel_color[1] / 255 > 0.5
                 color_grid[i,j,2] = pixel_color[2] / 255 > 0.5 
-            else: #binary
+    else: #binary
+        for i in range(N): 
+            for j in range(N): 
                 color_grid[i,j,0] = grid[i,j] > 0
                 color_grid[i,j,1] = grid[i,j] > 0
                 color_grid[i,j,2] = grid[i,j] > 0     
