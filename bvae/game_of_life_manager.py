@@ -89,20 +89,33 @@ def update(grid):
                         newGrid[i, j] = get_new_color(old_colors, np.random.uniform(low=0, high=10))                        
     return newGrid
 
-def grid2colorgrid(grid):
+def grid2colorgrid(grid, colorscheme):
     N = len(grid)
     color_grid = np.zeros((N,N,3), dtype=np.float32)
     for i in range(N): 
         for j in range(N): 
-            pixel_color = rgb_int2tuple(grid[i,j])
-            color_grid[i,j,0] = pixel_color[0] / 255 # grid[i,j] > 0
-            color_grid[i,j,1] = pixel_color[1] / 255 # grid[i,j] > 0
-            color_grid[i,j,2] = pixel_color[2] / 255 # grid[i,j] > 0 
+            if colorscheme == 'soft':
+                pixel_color = rgb_int2tuple(grid[i,j])
+                color_grid[i,j,0] = pixel_color[0] / 255 # grid[i,j] > 0
+                color_grid[i,j,1] = pixel_color[1] / 255 # grid[i,j] > 0
+                color_grid[i,j,2] = pixel_color[2] / 255 # grid[i,j] > 0 
+            elif colorscheme == 'hard':
+                pixel_color = rgb_int2tuple(grid[i,j])
+                if ~np.any([np.array(pixel_color) > 0.5]):
+                    #none of the colors are bigger than 0.5, take the brightest channel
+                    color_grid[i,j,np.argmax(np.array(pixel_color))] = 1
+                color_grid[i,j,0] = pixel_color[0] / 255 > 0.5
+                color_grid[i,j,1] = pixel_color[1] / 255 > 0.5
+                color_grid[i,j,2] = pixel_color[2] / 255 > 0.5 
+            else: #binary
+                color_grid[i,j,0] = grid[i,j] > 0
+                color_grid[i,j,1] = grid[i,j] > 0
+                color_grid[i,j,2] = grid[i,j] > 0     
     return color_grid
 
-def grid2img(grid, img_size):
+def grid2img(grid, img_size, colorscheme='soft'):
     img = np.zeros((img_size,img_size,3), dtype=np.float32)
-    img[1:img_size-1, 1:img_size-1,:] = grid2colorgrid(grid)
+    img[1:img_size-1, 1:img_size-1,:] = grid2colorgrid(grid, colorscheme)
     
     # continuous boundaries
     img[0,:,:] = img[img_size-2,:,:]
@@ -118,7 +131,7 @@ class GameManager(object):
         self.grid = randomGrid(self.N)
         self.n_samples = batchSize
         self.skip_initial_iteration = 4
-        
+        self.colorscheme = 'hard'
     def reset(self):
         self.grid = randomGrid(self.N)
         for index in range(self.skip_initial_iteration):
@@ -137,7 +150,7 @@ class GameManager(object):
         images = np.zeros((count,self.img_size,self.img_size,3), dtype=np.float32)
         self.reset()
         for index in range(count):
-          img = grid2img(self.grid, self.img_size)
+          img = grid2img(self.grid, self.img_size, self.colorscheme)
           images[index,:,:,:] = img
           self.grid = update(self.grid)
         return images
@@ -147,7 +160,7 @@ class GameManager(object):
             images = np.zeros((self.n_samples,self.img_size,self.img_size,3), dtype=np.float32)
             self.reset()
             for index in range(self.n_samples):
-              img = grid2img(self.grid, self.img_size)
+              img = grid2img(self.grid, self.img_size, self.colorscheme)
               images[index,:,:,:] = img
               self.grid = update(self.grid)
             yield images, images

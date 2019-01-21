@@ -100,7 +100,7 @@ if __name__ == "__main__":
             bvae.encoder.save(os.path.join(output_models_folder, str(iteration_number)+'_encoder.h5'))
         if iteration_number == iterations:
             bvae.ae.save(os.path.join(output_models_folder, str(iteration_number)+'_autoencoder.h5'))
-            s
+            
         iteration_number+=1
         #check in once n iterations
         
