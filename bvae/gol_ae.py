@@ -19,7 +19,7 @@ import time
 class ChangeMetrics(Callback):
     def on_epoch_end(self, epoch, logs):
         #logs['loss'] = np.mean(logs['loss'])  # replace it with your metrics
-        logs['val_loss'] = np.mean(logs['val_loss'])  # replace it with your metrics
+        logs['val_loss'] = np.mean(logs['val_loss'][0])  # replace it with your metrics
             
     def on_batch_end(self, batch, logs):
         logs['loss'] = np.mean(logs['loss'])  # replace it with your metrics
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         nval=5#number_of_validation_samples//batchSize  
         iterations = 100
         os.system('tensorboard --logdir=/tmp/logs &')
-        tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=True)
+        tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
