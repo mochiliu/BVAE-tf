@@ -104,5 +104,5 @@ if __name__ == "__main__":
         iteration_number+=1
         #check in once n iterations
         
-        
-    os.system('sudo shutdown -h now')
+    if os.name != 'nt':
+        os.system('sudo shutdown -h now')
