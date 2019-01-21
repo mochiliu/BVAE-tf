@@ -52,7 +52,7 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
-    latentSize = 64
+    latentSize = 32
     
     #set up output folders
     path = os.getcwd()  
