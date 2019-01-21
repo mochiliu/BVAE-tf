@@ -6,10 +6,9 @@ created by shadySource
 
 THE UNLICENSE
 '''
-import tensorflow as tf
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras import backend as K
-from tensorflow.python.keras.callbacks import TensorBoard
+from tensorflow.python.keras.callbacks import Callback, TensorBoard
 from simple_models import Encoder, Decoder, ConvEncoder, ConvDecoder, OptimalEncoder, OptimalDecoder
 import shutil, os
 import numpy as np
@@ -17,7 +16,15 @@ from PIL import Image
 from game_of_life_manager import GameManager
 import time
 
-
+class ChangeMetrics(Callback):
+    def on_epoch_end(self, epoch, logs):
+        logs['loss'] = np.mean(logs['loss'])  # replace it with your metrics
+        logs['val_loss'] = np.mean(logs['val_loss'][0])  # replace it with your metrics
+            
+    def on_batch_end(self, batch, logs):
+        logs['loss'] = np.mean(logs['loss'])  # replace it with your metrics
+    
+            
 class AutoEncoder(object):
     def __init__(self, encoderArchitecture, 
                  decoderArchitecture):
@@ -41,8 +48,7 @@ if __name__ == "__main__":
         nval=5#number_of_validation_samples//batchSize  
         iterations = 500
         os.system('tensorboard --logdir=/tmp/logs &')
-        tensorboard = TensorBoard(log_dir='./tmp/logs', histogram_freq=0,
-                          write_graph=True, write_images=True)
+        tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=True)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
@@ -70,9 +76,9 @@ if __name__ == "__main__":
 
     while iteration_number <= iterations:
         if os.name == 'nt':
-            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(),tensorboard])
         else:
-            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=25, workers=9, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[tensorboard])
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=25, workers=9, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
 
         img = manager.get_images(batchSize)
         latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
