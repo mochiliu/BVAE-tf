@@ -46,18 +46,27 @@ if __name__ == "__main__":
         batchSize = 4*64
         ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
-        iterations = 100
+        iterations = 200
+        
+        #load tensorboard
         os.system('tensorboard --logdir=/tmp/logs &')
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
-    latentSize = 8
+    latentSize = 32
     
     #set up output folders
-    path = os.getcwd()  
-    outputs_folder = os.path.join(path, 'outputs')
-    output_models_folder = os.path.join(path, 'output_models')
+    path = os.getcwd() 
+    git_commit_msg_file = os.path.join(path, '..', '.git', 'COMMIT_EDITMSG')
+    f = open(git_commit_msg_file, "r")
+    msg = f.read()
+    msg = msg.replace(' ', '_').lower()
+    msg = msg.splitlines()[0]
+    print(msg)
+    
+    outputs_folder = os.path.join(path, 'outputs', msg)
+    output_models_folder = os.path.join(path, 'output_models', msg)
     shutil.rmtree(outputs_folder,ignore_errors=True)
     shutil.rmtree(output_models_folder,ignore_errors=True)
     os.mkdir(outputs_folder)
