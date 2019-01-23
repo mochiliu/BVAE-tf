@@ -15,6 +15,7 @@ import numpy as np
 from PIL import Image
 from game_of_life_manager import GameManager
 import time
+import subprocess
 
 class ChangeMetrics(Callback):
     def on_epoch_end(self, epoch, logs):
@@ -37,17 +38,22 @@ class AutoEncoder(object):
 
 if __name__ == "__main__":
     #test if windows or linux
+    path = os.getcwd() 
     if os.name == 'nt':
         batchSize = 64
         ntrain=1#number_of_training_samples//batchSize 
         nval=1#number_of_validation_samples//batchSize  
         iterations = 0
+        git_commit_msg_file = os.path.join(path, '..', '.git', 'COMMIT_EDITMSG')
+        f = open(git_commit_msg_file, "r")
+        msg = f.read()
     else:
         batchSize = 4*64
         ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
         iterations = 200
-        
+        msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
+        msg = msg.decode('utf-8')
         #load tensorboard
         os.system('tensorboard --logdir=/tmp/logs &')
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
@@ -55,14 +61,10 @@ if __name__ == "__main__":
     inputShape = (32, 32, 3)
     intermediateSize = 900
     latentSize = 32
-    
     #set up output folders
-    path = os.getcwd() 
-    git_commit_msg_file = os.path.join(path, '..', '.git', 'COMMIT_EDITMSG')
-    f = open(git_commit_msg_file, "r")
-    msg = f.read()
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
+    
     print(msg)
     
     outputs_folder = os.path.join(path, 'outputs', msg)
