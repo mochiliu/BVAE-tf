@@ -51,7 +51,7 @@ if __name__ == "__main__":
         batchSize = 4*64
         ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
-        iterations = 200
+        iterations = 500
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
         #load tensorboard
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         pred = Image.fromarray(pred)
         pred.save(os.path.join(outputs_folder,str(iteration_number)+'_pred_'+'.bmp'))
 
-        if iteration_number % 20 == 0:
+        if iteration_number % 50 == 0:
             #bvae.ae.save(os.path.join(output_models_folder, str(iteration_number)+'_autoencoder.h5'))
             bvae.decoder.save(os.path.join(output_models_folder, str(iteration_number)+'_decoder.h5'))
             bvae.encoder.save(os.path.join(output_models_folder, str(iteration_number)+'_encoder.h5'))
