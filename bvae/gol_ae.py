@@ -60,7 +60,7 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
-    latentSize = 32
+    latentSize = 128
     #set up output folders
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
