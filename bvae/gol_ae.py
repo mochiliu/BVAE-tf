@@ -51,7 +51,7 @@ if __name__ == "__main__":
         batchSize = 4*64
         ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
-        iterations = 500
+        iterations = 1000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
         #load tensorboard
