@@ -17,6 +17,14 @@ from game_of_life_manager import GameManager
 import time
 import subprocess
 
+from tensorflow.python.keras.backend.tensorflow_backend import set_session
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+config.log_device_placement = True  # to log device placement (on which device the operation ran)
+sess = tf.Session(config=config)
+set_session(sess)  # set this TensorFlow session as the default session for Keras
+
+
 class ChangeMetrics(Callback):
     def on_epoch_end(self, epoch, logs):
         logs['loss'] = np.mean(logs['loss'])  # replace it with your metrics
@@ -71,8 +79,8 @@ if __name__ == "__main__":
     output_models_folder = os.path.join(path, 'output_models', msg)
     shutil.rmtree(outputs_folder,ignore_errors=True)
     shutil.rmtree(output_models_folder,ignore_errors=True)
-    os.mkdir(outputs_folder)
-    os.mkdir(output_models_folder)
+    os.mkdirs(outputs_folder)
+    os.mkdirs(output_models_folder)
   
     manager = GameManager(batchSize)
     
