@@ -17,7 +17,8 @@ from game_of_life_manager import GameManager
 import time
 import subprocess
 
-from tensorflow.python.keras.backend.tensorflow_backend import set_session
+import tensorflow as tf
+from tensorflow.python.keras.backend import set_session
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
 config.log_device_placement = True  # to log device placement (on which device the operation ran)
@@ -79,8 +80,8 @@ if __name__ == "__main__":
     output_models_folder = os.path.join(path, 'output_models', msg)
     shutil.rmtree(outputs_folder,ignore_errors=True)
     shutil.rmtree(output_models_folder,ignore_errors=True)
-    os.mkdirs(outputs_folder)
-    os.mkdirs(output_models_folder)
+    os.makedirs(outputs_folder)
+    os.makedirs(output_models_folder)
   
     manager = GameManager(batchSize)
     
