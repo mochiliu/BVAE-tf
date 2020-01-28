@@ -86,8 +86,11 @@ if __name__ == "__main__":
     manager = GameManager(batchSize)
     
     #conv autoencoder
-    encoder = OptimalEncoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
-    decoder = OptimalDecoder(inputShape, batchSize, latentSize, intermediateSize)
+    #encoder = OptimalEncoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
+    #decoder = OptimalDecoder(inputShape, batchSize, latentSize, intermediateSize)
+    encoder = Encoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
+    decoder = Decoder(inputShape, batchSize, latentSize, intermediateSize)
+
     
     bvae = AutoEncoder(encoder, decoder)
 
