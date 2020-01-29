@@ -16,6 +16,14 @@ from PIL import Image
 from game_of_life_manager import GameManager
 import time
 
+import tensorflow as tf
+from tensorflow.python.keras.backend import set_session
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+config.log_device_placement = True  # to log device placement (on which device the operation ran)
+sess = tf.Session(config=config)
+set_session(sess)  # set this TensorFlow session as the default session for Keras
+
 class ChangeMetrics(Callback):
     def on_epoch_end(self, epoch, logs):
         logs['loss'] = np.mean(logs['loss'])  # replace it with your metrics
