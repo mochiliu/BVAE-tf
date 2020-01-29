@@ -68,8 +68,8 @@ if __name__ == "__main__":
     output_models_folder = os.path.join(path, 'output_models')
     shutil.rmtree(outputs_folder,ignore_errors=True)
     shutil.rmtree(output_models_folder,ignore_errors=True)
-    os.mkdir(outputs_folder)
-    os.mkdir(output_models_folder)
+    os.makedirs(outputs_folder)
+    os.makedirs(output_models_folder)
   
     manager = GameManager(batchSize)
     
