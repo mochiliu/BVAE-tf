@@ -86,7 +86,7 @@ if __name__ == "__main__":
         if os.name == 'nt':
             bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(),tensorboard])
         else:
-            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=20, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
 
         img = manager.get_images(batchSize)
         latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]
