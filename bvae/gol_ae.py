@@ -50,24 +50,30 @@ if __name__ == "__main__":
         ntrain=1#number_of_training_samples//batchSize 
         nval=1#number_of_validation_samples//batchSize  
         iterations = 0
+        git_commit_msg_file = os.path.join(path, '..', '.git', 'COMMIT_EDITMSG')
+        f = open(git_commit_msg_file, "r")
+        msg = f.read()
     else:
         batchSize = 4*64
         ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
-        iterations = 100
+        iterations = 1000
+        msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
+        msg = msg.decode('utf-8'
         os.system('tensorboard --logdir=/tmp/logs &')
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
-    latentSize = 32
+    latentSize = 64
     
-    #set up output folders
+    #set up output folders    
+    print(msg)
     path = os.getcwd()  
-    outputs_folder = os.path.join(path, 'outputs')
-    output_models_folder = os.path.join(path, 'output_models')
-    #shutil.rmtree(outputs_folder,ignore_errors=True)
-    #shutil.rmtree(output_models_folder,ignore_errors=True)
+    outputs_folder = os.path.join(path, 'outputs', msg)
+    output_models_folder = os.path.join(path, 'output_models', msg)
+    shutil.rmtree(outputs_folder,ignore_errors=True)
+    shutil.rmtree(output_models_folder,ignore_errors=True)
     os.makedirs(outputs_folder,exist_ok=True)
     os.makedirs(output_models_folder,exist_ok=True)
   

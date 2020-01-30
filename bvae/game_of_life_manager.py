@@ -135,7 +135,7 @@ class GameManager(object):
         self.grid = randomGrid(self.N)
         self.n_samples = batchSize
         self.skip_initial_iteration = 4
-        self.colorscheme = 'hard'
+        self.colorscheme = 'binary' #'hard'
     def reset(self):
         self.grid = randomGrid(self.N)
         for index in range(self.skip_initial_iteration):
