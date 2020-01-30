@@ -59,7 +59,7 @@ if __name__ == "__main__":
         nval=5#number_of_validation_samples//batchSize  
         iterations = 1000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
-        msg = msg.decode('utf-8'
+        msg = msg.decode('utf-8')
         os.system('tensorboard --logdir=/tmp/logs &')
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
