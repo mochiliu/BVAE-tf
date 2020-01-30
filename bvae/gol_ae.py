@@ -58,7 +58,7 @@ if __name__ == "__main__":
         batchSize = 4*64
         ntrain=100#number_of_training_samples//batchSize 
         nval=5#number_of_validation_samples//batchSize  
-        iterations = 1000
+        iterations = 2000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
         os.system('tensorboard --logdir=/tmp/logs &')
@@ -66,8 +66,11 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
-    latentSize = 64
+    latentSize = 128
     
+    msg = msg.replace(' ', '_').lower()
+    msg = msg.splitlines()[0]
+
     #set up output folders    
     print(msg)
     path = os.getcwd()  
@@ -102,12 +105,12 @@ if __name__ == "__main__":
         train = img[0] #get a sample image
         train = np.uint8(train* 255) # convert to regular image values
         train = Image.fromarray(train)
-        train.save(os.path.join(outputs_folder,str(iteration_number)+'_train_'+'.bmp'))
+        train.save(os.path.join(outputs_folder,str(iteration_number)+'_train'+'.bmp'))
         
         pred = bvae.ae.predict(img, batch_size=batchSize)[0] # get the reconstructed image
         pred = np.uint8(pred * 255) # convert to regular image values
         pred = Image.fromarray(pred)
-        pred.save(os.path.join(outputs_folder,str(iteration_number)+'_pred_'+'.bmp'))
+        pred.save(os.path.join(outputs_folder,str(iteration_number)+'_pred'+'.bmp'))
 
         if iteration_number % 20 == 0:
             #bvae.ae.save(os.path.join(output_models_folder, str(iteration_number)+'_autoencoder.h5'))
