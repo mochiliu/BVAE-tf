@@ -15,6 +15,7 @@ import numpy as np
 from PIL import Image
 from game_of_life_manager import GameManager
 import time
+import subprocess
 
 import tensorflow as tf
 from tensorflow.python.keras.backend import set_session
