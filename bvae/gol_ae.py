@@ -60,7 +60,7 @@ if __name__ == "__main__":
         batchSize = 4*64
         ntrain=16*8#number_of_training_samples//batchSize 
         nval=16#number_of_validation_samples//batchSize  
-        iterations = 1000
+        iterations = 1500
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
         os.system('tensorboard --logdir=/tmp/logs &')
@@ -88,8 +88,8 @@ if __name__ == "__main__":
     #conv autoencoder
     #encoder = OptimalEncoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
     #decoder = OptimalDecoder(inputShape, batchSize, latentSize, intermediateSize)
-    encoder = Encoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
-    decoder = Decoder(inputShape, batchSize, latentSize)
+    encoder = ConvEncoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
+    decoder = ConvDecoder(inputShape, batchSize, latentSize)
     
     bvae = AutoEncoder(encoder, decoder)
 
