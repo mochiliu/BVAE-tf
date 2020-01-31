@@ -17,13 +17,6 @@ from game_of_life_manager import GameManager
 import time
 import subprocess
 
-import tensorflow as tf
-from tensorflow.python.keras.backend import set_session
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
-config.log_device_placement = True  # to log device placement (on which device the operation ran)
-sess = tf.Session(config=config)
-set_session(sess)  # set this TensorFlow session as the default session for Keras
 
 class ChangeMetrics(Callback):
     def on_epoch_end(self, epoch, logs):
@@ -55,18 +48,27 @@ if __name__ == "__main__":
         f = open(git_commit_msg_file, "r")
         msg = f.read()
     else:
+        #rtx 2060 correction
+        import tensorflow as tf
+        from tensorflow.python.keras.backend import set_session
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+        config.log_device_placement = True  # to log device placement (on which device the operation ran)
+        sess = tf.Session(config=config)
+        set_session(sess)  # set this TensorFlow session as the default session for Keras
+
         batchSize = 4*64
-        ntrain=100#number_of_training_samples//batchSize 
-        nval=5#number_of_validation_samples//batchSize  
-        iterations = 2000
+        ntrain=16*8#number_of_training_samples//batchSize 
+        nval=16#number_of_validation_samples//batchSize  
+        iterations = 1000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
         os.system('tensorboard --logdir=/tmp/logs &')
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
-    intermediateSize = 900
-    latentSize = 128
+    #intermediateSize = 900
+    latentSize = 900
     
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
@@ -84,8 +86,10 @@ if __name__ == "__main__":
     manager = GameManager(batchSize)
     
     #conv autoencoder
-    encoder = OptimalEncoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
-    decoder = OptimalDecoder(inputShape, batchSize, latentSize, intermediateSize)
+    #encoder = OptimalEncoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
+    #decoder = OptimalDecoder(inputShape, batchSize, latentSize, intermediateSize)
+    encoder = Encoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
+    decoder = Decoder(inputShape, batchSize, latentSize)
     
     bvae = AutoEncoder(encoder, decoder)
 
@@ -112,7 +116,7 @@ if __name__ == "__main__":
         pred = Image.fromarray(pred)
         pred.save(os.path.join(outputs_folder,str(iteration_number)+'_pred'+'.bmp'))
 
-        if iteration_number % 20 == 0:
+        if iteration_number % 100 == 0:
             #bvae.ae.save(os.path.join(output_models_folder, str(iteration_number)+'_autoencoder.h5'))
             bvae.decoder.save(os.path.join(output_models_folder, str(iteration_number)+'_decoder.h5'))
             bvae.encoder.save(os.path.join(output_models_folder, str(iteration_number)+'_encoder.h5'))
