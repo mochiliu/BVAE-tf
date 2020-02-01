@@ -93,7 +93,8 @@ if __name__ == "__main__":
     
     bvae = AutoEncoder(encoder, decoder)
 
-    bvae.ae.compile(optimizer='adam', loss='binary_crossentropy')
+    #bvae.ae.compile(optimizer='adam', loss='binary_crossentropy')
+    bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
     iteration_number = 0
 
     while iteration_number <= iterations:
