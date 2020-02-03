@@ -68,7 +68,7 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     #intermediateSize = 900
-    latentSize = 900
+    latentSize = 64
     
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
@@ -93,8 +93,8 @@ if __name__ == "__main__":
     
     bvae = AutoEncoder(encoder, decoder)
 
-    #bvae.ae.compile(optimizer='adam', loss='binary_crossentropy')
-    bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
+    bvae.ae.compile(optimizer='adam', loss='binary_crossentropy')
+    #bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
     iteration_number = 0
 
     while iteration_number <= iterations:
