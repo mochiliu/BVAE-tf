@@ -57,10 +57,10 @@ if __name__ == "__main__":
         sess = tf.Session(config=config)
         set_session(sess)  # set this TensorFlow session as the default session for Keras
 
-        batchSize = 4*64
+        batchSize = 8*64
         ntrain=16*8#number_of_training_samples//batchSize 
         nval=16#number_of_validation_samples//batchSize  
-        iterations = 1500
+        iterations = 2000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
         os.system('tensorboard --logdir=/tmp/logs &')
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     #intermediateSize = 900
-    latentSize = 64
+    latentSize = 900
     
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
@@ -101,7 +101,8 @@ if __name__ == "__main__":
         if os.name == 'nt':
             bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(),tensorboard])
         else:
-            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
+            bvae.ae.fit_generator(manager.generate_images_fast(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
+            #bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
 
         img = manager.get_images(batchSize)
         latentVec = bvae.encoder.predict(img, batch_size=batchSize)[0]

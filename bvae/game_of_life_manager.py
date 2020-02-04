@@ -129,13 +129,21 @@ def grid2img(grid, img_size, colorscheme='soft'):
     return img
 
 class GameManager(object):
-    def __init__(self, batchSize=64):
+    def __init__(self, batchSize=64, fast_multiplier=100):
         self.N = 30
         self.img_size = self.N + 2
         self.grid = randomGrid(self.N)
         self.n_samples = batchSize
         self.skip_initial_iteration = 4
+        step_size = self.N // int(np.sqrt(fast_multiplier))
+        self.shifts_for_fastgen = range(0, self.N, step_size)
+        number_in_range = 0
+        for index in self.shifts_for_fastgen:
+            number_in_range += 1
+        self.rounds_for_fastgen = batchSize // (number_in_range * number_in_range)
+        self.initialset_for_fastgen = batchSize % (number_in_range * number_in_range)
         self.colorscheme = 'binary' #'hard'
+        
     def reset(self):
         self.grid = randomGrid(self.N)
         for index in range(self.skip_initial_iteration):
@@ -168,7 +176,31 @@ class GameManager(object):
               images[index,:,:,:] = img
               self.grid = update(self.grid)
             yield images, images
-    
+            
+    def generate_images_fast(self):
+        while True:
+            images = np.zeros((self.n_samples,self.img_size,self.img_size,3), dtype=np.float32)
+            self.reset()
+            current_index = 0
+            for index in range(self.initialset_for_fastgen):
+                images[current_index,1:self.img_size-1, 1:self.img_size-1,:] = grid2colorgrid(self.grid, self.colorscheme)
+                self.grid = update(self.grid)
+                current_index += 1
+            for fast_gen_rounds in range(self.rounds_for_fastgen):
+                for x_shift in self.shifts_for_fastgen:
+                    for y_shift in self.shifts_for_fastgen:
+                        rolled_grid = np.roll(np.roll(self.grid,x_shift,axis=0),y_shift,axis=1)
+                        images[current_index,1:self.img_size-1, 1:self.img_size-1,:] = grid2colorgrid(rolled_grid, self.colorscheme)
+                        current_index += 1
+                self.grid = update(self.grid)
+                
+            # continuous boundaries
+            images[:,0,:,:] = images[:,self.img_size-2,:,:]
+            images[:,self.img_size-1,:,:] = images[:,1,:,:]
+            images[:,:,0,:] = images[:,:,self.img_size-2,:]
+            images[:,:,self.img_size-1,:] = images[:,:,1,:]
+            yield images, images
+        
     def get_random_images(self, size):
         indices = [np.random.randint(self.n_samples) for i in range(size)]
         images = self.get_images(self.n_samples)
@@ -178,6 +210,9 @@ class GameManager(object):
         return random_images
 
 if __name__ == '__main__':
-    manager = GameManager()
-    test = manager.get_random_images(10)
-    print(test[0])
+    manager = GameManager(batchSize=64*4)
+    test = manager.generate_images_fast()
+    test2 = np.sum(np.squeeze(test[manager.sample_size-1,:,:,:]), axis=2)
+    print(test2)
+    #test = manager.get_random_images(10)
+    #print(test[0])
