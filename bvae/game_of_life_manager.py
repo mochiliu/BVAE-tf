@@ -129,7 +129,7 @@ def grid2img(grid, img_size, colorscheme='soft'):
     return img
 
 class GameManager(object):
-    def __init__(self, batchSize=64, fast_multiplier=100):
+    def __init__(self, batchSize=64, fast_multiplier=16):
         self.N = 30
         self.img_size = self.N + 2
         self.grid = randomGrid(self.N)
@@ -199,6 +199,7 @@ class GameManager(object):
             images[:,self.img_size-1,:,:] = images[:,1,:,:]
             images[:,:,0,:] = images[:,:,self.img_size-2,:]
             images[:,:,self.img_size-1,:] = images[:,:,1,:]
+            np.random.shuffle(images)
             yield images, images
         
     def get_random_images(self, size):

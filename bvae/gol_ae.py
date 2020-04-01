@@ -57,7 +57,7 @@ if __name__ == "__main__":
         sess = tf.Session(config=config)
         set_session(sess)  # set this TensorFlow session as the default session for Keras
 
-        batchSize = 16*64
+        batchSize = 8*64
         ntrain=16*8#number_of_training_samples//batchSize 
         nval=16#number_of_validation_samples//batchSize  
         iterations = 2000
