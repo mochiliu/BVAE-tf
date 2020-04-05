@@ -57,9 +57,9 @@ if __name__ == "__main__":
         sess = tf.Session(config=config)
         set_session(sess)  # set this TensorFlow session as the default session for Keras
 
-        batchSize = 8*64
-        ntrain=16*8#number_of_training_samples//batchSize 
-        nval=16#number_of_validation_samples//batchSize  
+        batchSize = 4*64
+        ntrain=100#16*8#number_of_training_samples//batchSize 
+        nval=5#16#number_of_validation_samples//batchSize  
         iterations = 2000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
-    #intermediateSize = 900
+    intermediateSize = 900
     latentSize = 64
     
     msg = msg.replace(' ', '_').lower()
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         if os.name == 'nt':
             bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(),tensorboard])
         else:
-            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=9, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
             #bvae.ae.fit_generator(manager.generate_images_fast(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
             #bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
 
