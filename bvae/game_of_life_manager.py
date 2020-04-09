@@ -129,7 +129,7 @@ def grid2img(grid, img_size, colorscheme='soft'):
     return img
 
 class GameManager(object):
-    def __init__(self, batchSize=64, fast_multiplier=16):
+    def __init__(self, batchSize=64, fast_multiplier=4):
         self.N = 30
         self.img_size = self.N + 2
         self.grid = randomGrid(self.N)
@@ -212,8 +212,13 @@ class GameManager(object):
 
 if __name__ == '__main__':
     manager = GameManager(batchSize=64*4)
-    test = manager.generate_images_fast()
-    test2 = np.sum(np.squeeze(test[manager.sample_size-1,:,:,:]), axis=2)
-    print(test2)
-    #test = manager.get_random_images(10)
+    test = next(manager.generate_images_fast())
+    test2 = test[0]
+    test3 = np.sum(np.squeeze(test2[manager.sample_size-1,:,:,:]), axis=2)
+    print(test3)
+    #t = next(manager.generate_images())
+    #t2 = t[0]
+    #t3 = np.sum(np.squeeze(t2[manager.sample_size-1,:,:,:]), axis=2)
+    import matplotlib.pyplot as plt
+    plt.imshow(np.sum(np.squeeze(test2[4,:,:,:]), axis=2))    #test = manager.get_random_images(10)
     #print(test[0])
