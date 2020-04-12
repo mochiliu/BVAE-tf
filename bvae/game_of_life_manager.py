@@ -199,7 +199,7 @@ class GameManager(object):
             images[:,self.img_size-1,:,:] = images[:,1,:,:]
             images[:,:,0,:] = images[:,:,self.img_size-2,:]
             images[:,:,self.img_size-1,:] = images[:,:,1,:]
-            np.random.shuffle(images)
+            #np.random.shuffle(images)
             yield images, images
         
     def get_random_images(self, size):
@@ -214,11 +214,18 @@ if __name__ == '__main__':
     manager = GameManager(batchSize=64*4)
     test = next(manager.generate_images_fast())
     test2 = test[0]
-    test3 = np.sum(np.squeeze(test2[manager.sample_size-1,:,:,:]), axis=2)
-    print(test3)
+    #test3 = np.sum(np.squeeze(test2[manager.sample_size-1,:,:,:]), axis=2)
+    #print(test3)
     #t = next(manager.generate_images())
     #t2 = t[0]
     #t3 = np.sum(np.squeeze(t2[manager.sample_size-1,:,:,:]), axis=2)
     import matplotlib.pyplot as plt
-    plt.imshow(np.sum(np.squeeze(test2[4,:,:,:]), axis=2))    #test = manager.get_random_images(10)
+    for index in range(manager.sample_size):
+        f = plt.figure()
+        plt.imshow(np.sum(np.squeeze(test2[index,:,:,:]), axis=2))
+        plt.show()
+        input("Press Enter to continue...")
+
+        #test = manager.get_random_images(10)
+
     #print(test[0])
