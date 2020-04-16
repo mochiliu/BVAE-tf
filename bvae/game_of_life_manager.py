@@ -188,9 +188,6 @@ class GameManager(object):
             for x_shift in self.shifts_for_fastgen:
                 for y_shift in self.shifts_for_fastgen:
                     rolled_images = np.zeros((self.n_samples,self.img_size,self.img_size,3), dtype=np.float32)
-                    print(self.shifts_for_fastgen)
-                    print(x_shift)
-                    print(y_shift)
                     rolled_images[:,1:self.img_size-1, 1:self.img_size-1,:] = np.roll(np.roll(no_borders_imgs,x_shift,axis=1),y_shift,axis=2)
                     rolled_images[:,0,:,:] = rolled_images[:,self.img_size-2,:,:]
                     rolled_images[:,self.img_size-1,:,:] = rolled_images[:,1,:,:]
