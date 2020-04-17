@@ -58,7 +58,7 @@ if __name__ == "__main__":
         set_session(sess)  # set this TensorFlow session as the default session for Keras
 
         batchSize = 4*64
-        ntrain=16*8#number_of_training_samples//batchSize 
+        ntrain=16*16#number_of_training_samples//batchSize 
         nval=16#number_of_validation_samples//batchSize  
         iterations = 2000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
