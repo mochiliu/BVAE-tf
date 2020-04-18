@@ -68,7 +68,7 @@ if __name__ == "__main__":
         batchSize = 4*64
         ntrain=16*16#number_of_training_samples//batchSize 
         nval=16#number_of_validation_samples//batchSize  
-        iterations = 2000
+        iterations = 4000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
         os.system('tensorboard --logdir=/tmp/logs &')
@@ -76,7 +76,8 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
-    latentSize = 64    
+    latentSize = 900
+    fast_multiplier = 16
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
 
@@ -90,7 +91,7 @@ if __name__ == "__main__":
     os.makedirs(outputs_folder,exist_ok=True)
     os.makedirs(output_models_folder,exist_ok=True)
   
-    manager = GameManager(batchSize)
+    manager = GameManager(batchSize, fast_multiplier)
     
     #conv autoencoder
     #encoder = OptimalEncoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
