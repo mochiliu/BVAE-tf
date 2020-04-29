@@ -76,7 +76,7 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 900
-    latentSize = 512
+    latentSize = 900
     fast_multiplier = 16
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
@@ -94,10 +94,10 @@ if __name__ == "__main__":
     manager = GameManager(batchSize, fast_multiplier)
     
     #conv autoencoder
-    #encoder = OptimalEncoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
-    #decoder = OptimalDecoder(inputShape, batchSize, latentSize, intermediateSize)
-    encoder = ConvEncoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
-    decoder = ConvDecoder(inputShape, batchSize, latentSize)
+    encoder = OptimalEncoder(inputShape, batchSize, latentSize, intermediateSize, 'vae', beta=69, capacity=15, randomSample=True)
+    decoder = OptimalDecoder(inputShape, batchSize, latentSize, intermediateSize)
+    #encoder = ConvEncoder(inputShape, batchSize, latentSize, 'vae', beta=69, capacity=15, randomSample=True)
+    #decoder = ConvDecoder(inputShape, batchSize, latentSize)
     bvae = AutoEncoder(encoder, decoder)
 
     bvae.ae.compile(optimizer='adam', loss='binary_crossentropy')
