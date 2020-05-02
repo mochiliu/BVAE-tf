@@ -77,7 +77,7 @@ if __name__ == "__main__":
     inputShape = (32, 32, 3)
     intermediateSize = 900
     latentSize = 128
-    fast_multiplier = 16
+    fast_multiplier = 4
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
 
