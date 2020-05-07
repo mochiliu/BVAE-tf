@@ -135,6 +135,7 @@ class GameManager(object):
         self.grid = randomGrid(self.N)
         self.n_samples = batchSize
         self.skip_initial_iteration = 4
+        self.fast_multiplier = fast_multiplier
         step_size = self.N // int(np.sqrt(fast_multiplier))
         self.shifts_for_fastgen = range(0, self.N, step_size)
         number_in_range = 0
@@ -177,6 +178,28 @@ class GameManager(object):
               self.grid = update(self.grid)
             yield images, images
 
+    def generate_images_fast_randomshift(self):
+        while True:
+            # get borderless grids for the number of samples 
+            self.reset()
+            no_borders_imgs = np.zeros((self.n_samples,self.N,self.N ,3), dtype=np.float32)
+            for index in range(self.n_samples):
+              no_borders_imgs[index,:,:,:] = grid2colorgrid(self.grid, self.colorscheme)
+              self.grid = update(self.grid)
+            possible_shifts = np.array(range(self.N * self.N))
+            np.random.shuffle(possible_shifts)
+            shifts = possible_shifts[0:self.fast_multiplier]
+            for shift in shifts:
+                x_shift = np.mod(shift, self.N)
+                y_shift = np.floor_divide(shift, self.N)
+                rolled_images = np.zeros((self.n_samples,self.img_size,self.img_size,3), dtype=np.float32)
+                rolled_images[:,1:self.img_size-1, 1:self.img_size-1,:] = np.roll(np.roll(no_borders_imgs,x_shift,axis=1),y_shift,axis=2)
+                rolled_images[:,0,:,:] = rolled_images[:,self.img_size-2,:,:]
+                rolled_images[:,self.img_size-1,:,:] = rolled_images[:,1,:,:]
+                rolled_images[:,:,0,:] = rolled_images[:,:,self.img_size-2,:]
+                rolled_images[:,:,self.img_size-1,:] = rolled_images[:,:,1,:]
+                yield rolled_images, rolled_images
+
     def generate_images_fast(self):
         while True:
             # get borderless grids for the number of samples 
@@ -194,31 +217,6 @@ class GameManager(object):
                     rolled_images[:,:,0,:] = rolled_images[:,:,self.img_size-2,:]
                     rolled_images[:,:,self.img_size-1,:] = rolled_images[:,:,1,:]
                     yield rolled_images, rolled_images
-#
-#    def generate_images_fast(self):
-#        while True:
-#            images = np.zeros((self.n_samples,self.img_size,self.img_size,3), dtype=np.float32)
-#            self.reset()
-#            current_index = 0
-#            for index in range(self.initialset_for_fastgen):
-#                images[current_index,1:self.img_size-1, 1:self.img_size-1,:] = grid2colorgrid(self.grid, self.colorscheme)
-#                self.grid = update(self.grid)
-#                current_index += 1
-#            for fast_gen_rounds in range(self.rounds_for_fastgen):
-#                for x_shift in self.shifts_for_fastgen:
-#                    for y_shift in self.shifts_for_fastgen:
-#                        rolled_grid = np.roll(np.roll(self.grid,x_shift,axis=0),y_shift,axis=1)
-#                        images[current_index,1:self.img_size-1, 1:self.img_size-1,:] = grid2colorgrid(rolled_grid, self.colorscheme)
-#                        current_index += 1
-#                self.grid = update(self.grid)
-#                
-#            # continuous boundaries
-#            images[:,0,:,:] = images[:,self.img_size-2,:,:]
-#            images[:,self.img_size-1,:,:] = images[:,1,:,:]
-#            images[:,:,0,:] = images[:,:,self.img_size-2,:]
-#            images[:,:,self.img_size-1,:] = images[:,:,1,:]
-#            #np.random.shuffle(images)
-#            yield images, images
         
     def get_random_images(self, size):
         indices = [np.random.randint(self.n_samples) for i in range(size)]
@@ -230,7 +228,7 @@ class GameManager(object):
 
 if __name__ == '__main__':
     manager = GameManager(batchSize=64*4)
-    gen = manager.generate_images_fast_v2()
+    gen = manager.generate_images_fast_randomshift()
     test = next(gen)
     test = test[0]
     test2 = next(gen)

@@ -77,7 +77,7 @@ if __name__ == "__main__":
     inputShape = (32, 32, 3)
     intermediateSize = 900
     latentSize = 256
-    fast_multiplier = 4
+    fast_multiplier = 16
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
 
@@ -109,7 +109,7 @@ if __name__ == "__main__":
             bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(),tensorboard])
         else:
             #bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
-            bvae.ae.fit_generator(manager.generate_images_fast(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
+            bvae.ae.fit_generator(manager.generate_images_fast_randomshift(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
             #bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
 
         if iteration_number % 10 == 0:
