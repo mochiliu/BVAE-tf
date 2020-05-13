@@ -66,7 +66,7 @@ if __name__ == "__main__":
         set_session(sess)  # set this TensorFlow session as the default session for Keras
 
         batchSize = 4*64
-        ntrain=8*64#number_of_training_samples//batchSize 
+        ntrain=16*64#number_of_training_samples//batchSize 
         nval=16#number_of_validation_samples//batchSize  
         iterations = 2000
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
@@ -75,9 +75,9 @@ if __name__ == "__main__":
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
-    intermediateSize = 900
+    intermediateSize = 900 #too many, 768 max
     latentSize = 256
-    fast_multiplier = 12
+    fast_multiplier = 10
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
 
