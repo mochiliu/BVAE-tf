@@ -75,9 +75,9 @@ if __name__ == "__main__":
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
-    intermediateSize = 900 #too many, 768 max
-    latentSize = 256
-    fast_multiplier = 10
+    intermediateSize = 64 #too many, 768 max
+    latentSize = 8
+    fast_multiplier = 9
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
 
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     while iteration_number <= iterations:
         if os.name == 'nt':
-            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(),tensorboard])
+            bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, workers=1, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1)
         else:
             #bvae.ae.fit_generator(manager.generate_images(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
             bvae.ae.fit_generator(manager.generate_images_fast_randomshift(), steps_per_epoch=ntrain, max_queue_size=30, workers=16, use_multiprocessing=True, validation_data=next(manager.generate_images()), validation_steps=nval, epochs=1,verbose=1,callbacks=[ChangeMetrics(), tensorboard])
