@@ -76,7 +76,7 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 64 #too many, 768 max
-    latentSize = 32
+    latentSize = 64
     fast_multiplier = 9
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
