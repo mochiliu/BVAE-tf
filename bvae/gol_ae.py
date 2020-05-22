@@ -68,7 +68,7 @@ if __name__ == "__main__":
         batchSize = 4*64
         ntrain=16*64#number_of_training_samples//batchSize 
         nval=16#number_of_validation_samples//batchSize  
-        iterations = 2000
+        iterations = 1500
         msg = subprocess.check_output("git log -1 --pretty=%B", shell=True)
         msg = msg.decode('utf-8')
         os.system('tensorboard --logdir=/tmp/logs &')
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
     intermediateSize = 64 #too many, 768 max
-    latentSize = 48#64
+    latentSize = 256#64
     fast_multiplier = 8
     msg = msg.replace(' ', '_').lower()
     msg = msg.splitlines()[0]
