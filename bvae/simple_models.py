@@ -201,13 +201,16 @@ class OptimalEncoder(Architecture):
     def Build(self):
         # create the input layer for feeding the netowrk
         inLayer = Input(self.inputShape) #(32,32,3)
-        net = Conv2D(96, (3, 3), activation='relu', padding='same')(inLayer) #96 filters convolution, 3x3 filter sizes
-        #net = MaxPooling2D((2, 2), padding='same')(net) #(16,16,3)
-        net = MaxPooling2D((4, 4), padding='same')(net) #(8,8,3)
+        #net = Conv2D(96, (3, 3), activation='relu', padding='same')(inLayer) #96 filters convolution, 3x3 filter sizes
+        net = Conv2D(32, (3, 3), activation='relu', padding='same')(inLayer) #32 filters convolution, 3x3 filter sizes
+        net = MaxPooling2D((2, 2), padding='same')(net) #(16,16,3)
         
-        #net = Conv2D(32, (3, 3), activation='relu', padding='same')(net)
-        #net = MaxPooling2D((2, 2), padding='same')(net) #(8,8,3)
+        net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
+        net = MaxPooling2D((2, 2), padding='same')(net) #(8,8,3)
         
+        net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
+        net = MaxPooling2D((2, 2), padding='same')(net) #(4,4,3)
+
         net = Flatten()(net)
         net = Dense(self.intermediateSize, activation='relu')(net)
         
@@ -234,22 +237,39 @@ class OptimalDecoder(Architecture):
         super().__init__(inputShape, batchSize, latentSize)
 
     def Build(self):
-        # input layer is from sampling:
-        inLayer = Input([self.latentSize])
+#         # input layer is from sampling:
+#         inLayer = Input([self.latentSize])
         
-        net = Dense(self.intermediateSize, activation='relu')(inLayer)
-#        net = Dense(16*16*32, activation='relu')(inLayer)
-#        # encoder downscales input by a factor of 2, so we upsample to the second to last output shape:
-#        net = Reshape((16, 16, 32))(net)        
+#         net = Dense(self.intermediateSize, activation='relu')(inLayer)
+# #        net = Dense(16*16*32, activation='relu')(inLayer)
+# #        # encoder downscales input by a factor of 2, so we upsample to the second to last output shape:
+# #        net = Reshape((16, 16, 32))(net)        
 
-        net = Dense(8*8*32, activation='relu')(inLayer)
-        net = Reshape((8, 8, 32))(net) 
-        ##net = Conv2D(32, (3, 3), activation='relu', padding='same')(net)
-        ##net = UpSampling2D((2, 2))(net)
-        net = UpSampling2D((4, 4))(net) #(32,32,32)
-        net = Conv2D(96, (3, 3), activation='relu', padding='same')(net) #(32,32,96)
-        ##net = UpSampling2D((2, 2))(net)
-        net = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(net) #(32,32,3)
+#         net = Dense(8*8*32, activation='relu')(inLayer)
+#         net = Reshape((8, 8, 32))(net) 
+#         ##net = Conv2D(32, (3, 3), activation='relu', padding='same')(net)
+#         ##net = UpSampling2D((2, 2))(net)
+#         net = UpSampling2D((4, 4))(net) #(32,32,32)
+#         net = Conv2D(96, (3, 3), activation='relu', padding='same')(net) #(32,32,96)
+#         ##net = UpSampling2D((2, 2))(net)
+#         net = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(net) #(32,32,3)
+        
+
+
+        inLayer = Input([self.latentSize])
+
+        net = Dense(self.intermediateSize, activation='relu')(inLayer)
+        net = Reshape((1, 1, self.intermediateSize))(net)
+        # encoder downscales input by a factor of 2^3, so we upsample to the second to last output shape:
+        net = UpSampling2D((self.inputShape[0]//8, self.inputShape[1]//8))(net)
+
+        net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
+        net = UpSampling2D((2, 2))(net)
+        net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
+        net = UpSampling2D((2, 2))(net)
+        net = Conv2D(32, (3, 3), activation='relu', padding='same')(net)
+        net = UpSampling2D((2, 2))(net)
+        net = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(net)
         
         return Model(inLayer, net)
 
