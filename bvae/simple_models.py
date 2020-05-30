@@ -208,8 +208,8 @@ class OptimalEncoder(Architecture):
         net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
         net = MaxPooling2D((2, 2), padding='same')(net) #(8,8,3)
         
-        net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
-        net = MaxPooling2D((2, 2), padding='same')(net) #(4,4,3)
+        #net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
+        #net = MaxPooling2D((2, 2), padding='same')(net) #(4,4,3)
 
         net = Flatten()(net)
         net = Dense(self.intermediateSize, activation='relu')(net)
@@ -263,10 +263,12 @@ class OptimalDecoder(Architecture):
 #        # encoder downscales input by a factor of 2^3, so we upsample to the second to last output shape:
 #        net = UpSampling2D((self.inputShape[0]//8, self.inputShape[1]//8))(net)
 
-        net = Dense(4*4*16, activation='relu')(net)
-        net = Reshape((4, 4, 16))(net)
-        net = Conv2D(16, (3, 3), activation='relu', padding='same')(net) #(4,4,16)
-        net = UpSampling2D((2, 2))(net) #(4,4,16)
+        #net = Dense(4*4*16, activation='relu')(net)
+        #net = Reshape((4, 4, 16))(net)
+        #net = Conv2D(16, (3, 3), activation='relu', padding='same')(net) #(4,4,16)
+        #net = UpSampling2D((2, 2))(net) #(4,4,16)
+        net = Dense(8*8*16, activation='relu')(net)
+        net = Reshape((8, 8, 16))(net)
         net = Conv2D(16, (3, 3), activation='relu', padding='same')(net) #(8,8,16)
         net = UpSampling2D((2, 2))(net) #(16,16,16)
         net = Conv2D(32, (3, 3), activation='relu', padding='same')(net) #(16,16,32)
