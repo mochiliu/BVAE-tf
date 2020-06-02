@@ -202,10 +202,10 @@ class OptimalEncoder(Architecture):
         # create the input layer for feeding the netowrk
         inLayer = Input(self.inputShape) #(32,32,3)
         #net = Conv2D(96, (3, 3), activation='relu', padding='same')(inLayer) #96 filters convolution, 3x3 filter sizes
-        net = Conv2D(32, (3, 3), activation='relu', padding='same')(inLayer) #32 filters convolution, 3x3 filter sizes
+        net = Conv2D(96, (3, 3), activation='relu', padding='same')(inLayer) #32 filters convolution, 3x3 filter sizes
         net = MaxPooling2D((2, 2), padding='same')(net) #(16,16,3)
         
-        net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
+        net = Conv2D(32, (3, 3), activation='relu', padding='same')(net)
         net = MaxPooling2D((2, 2), padding='same')(net) #(8,8,3)
         
         #net = Conv2D(16, (3, 3), activation='relu', padding='same')(net)
@@ -269,9 +269,9 @@ class OptimalDecoder(Architecture):
         #net = UpSampling2D((2, 2))(net) #(4,4,16)
         net = Dense(8*8*16, activation='relu')(net)
         net = Reshape((8, 8, 16))(net)
-        net = Conv2D(16, (3, 3), activation='relu', padding='same')(net) #(8,8,16)
+        net = Conv2D(32, (3, 3), activation='relu', padding='same')(net) #(8,8,16)
         net = UpSampling2D((2, 2))(net) #(16,16,16)
-        net = Conv2D(32, (3, 3), activation='relu', padding='same')(net) #(16,16,32)
+        net = Conv2D(96, (3, 3), activation='relu', padding='same')(net) #(16,16,32)
         net = UpSampling2D((2, 2))(net) #(32,32,32)
         net = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(net) #(32,32,3)
         
