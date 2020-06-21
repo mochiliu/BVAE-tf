@@ -75,7 +75,7 @@ if __name__ == "__main__":
         tensorboard = TensorBoard(log_dir='/tmp/logs', histogram_freq=0, batch_size=batchSize, write_graph=False)
         time.sleep(15) # wait for it to boot up
     inputShape = (32, 32, 3)
-    intermediateSize = 256 
+    intermediateSize = 512 
     latentSize = 128
     fast_multiplier = 8
     msg = msg.replace(' ', '_').lower()
